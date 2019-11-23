@@ -50,6 +50,7 @@ plt.xlabel('[cm]')
 plt.show()
 
 # Statistical EDA: describe()
+
 describe_all = iris.describe()
 describe_setosa = setosa.describe()
 describe_versicolor = versicolor.describe()
