@@ -1,4 +1,4 @@
-# Separate and summarize
+# Separate and summarize !
 # Let's use population filtering to determine how the automobiles in the US differ from the global average and standard deviation. How does the distribution of fuel efficiency (MPG) for the US differ from the global average and standard deviation?
 # In this exercise, you'll compute the means and standard deviations of all columns in the full automobile dataset. Next, you'll compute the same quantities for just the US population and subtract the global values from the US values.
 # All necessary modules have been imported and the DataFrame has been pre-loaded as df.
