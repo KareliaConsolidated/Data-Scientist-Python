@@ -1,12 +1,8 @@
 /*Inner join
 PostgreSQL was mentioned in the slides but you'll find that these joins and the material here applies to different forms of SQL as well.
-
 Throughout this course, you'll be working with the countries database containing information about the most populous world cities as well as country-level economic data, population data, and geographic data. This countries database also contains information on languages spoken in each country.
-
 You can see the different tables in this database by clicking on the tabs on the bottom right below query.sql. Click through them to get a sense for the types of data that each table contains before you continue with the course! Take note of the fields that appear to be shared across the tables.
-
 Recall from the video the basic syntax for an INNER JOIN, here including all columns in both tables:
-
 SELECT *
 FROM left_table
 INNER JOIN right_table
@@ -27,15 +23,12 @@ FROM cities
 
 /*Inner join (2)
 Instead of writing the full table name, you can use table aliasing as a shortcut. For tables you also use AS to add the alias immediately after the table name with a space. Check out the aliasing of cities and countries below.
-
 SELECT c1.name AS city, c2.name AS country
 FROM cities AS c1
 INNER JOIN countries AS c2
 ON c1.country_code = c2.code;
 Notice that to select a field in your query that appears in multiple tables, you'll need to identify which table/table alias you're referring to by using a . in your SELECT statement.
-
 You'll now explore a way to get data from both the countries and economies tables to examine the inflation rate for both 2010 and 2015.
-
 Sometimes it's easier to write SQL code out of order: you write the SELECT statement after you've done the JOIN.*/
 
 -- 3. Select fields with aliases
@@ -48,7 +41,6 @@ FROM countries AS c
 
 /*Inner join (3)
 The ability to combine multiple joins in a single query is a powerful feature of SQL, e.g:
-
 SELECT *
 FROM left_table
   INNER JOIN right_table
@@ -56,9 +48,7 @@ FROM left_table
   INNER JOIN another_table
     ON left_table.id = another_table.id;
 As you can see here it becomes tedious to continually write long table names in joins. This is when it becomes useful to alias each table using the first letter of its name (e.g. countries AS c)! It is standard practice to alias in this way and, if you choose to alias tables or are asked to specifically for an exercise in this course, you should follow this protocol.
-
 Now, for each country, you want to get the country name, its region, and the fertility rate and unemployment rate for both 2010 and 2015.
-
 Note that results should work throughout this course with or without table aliasing unless specified differently.*/
 -- 6. Select fields
 SELECT c.code, name, region, e.year, fertility_rate, unemployment_rate
@@ -84,7 +74,6 @@ SELECT c.name AS country, c.continent, l.name AS language, official
 
 /*Self-join
 In this exercise, you'll use the populations table to perform a self-join to calculate the percentage increase in population from 2010 to 2015 for each country code!
-
 Since you'll be joining the populations table to itself, you can alias populations as p1 and also populations as p2. This is good practice whenever you are aliasing and your tables have the same first letter. Note that you are required to alias the tables with self-joins.*/
 
 -- 4. Select fields with aliases
@@ -125,7 +114,6 @@ FROM populations AS p1
 
 /*Case when and then
 Often it's useful to look at a numerical field not as raw data, but instead as being in different categories or groups.
-
 You can use CASE with WHEN, THEN, ELSE, and END to define a new grouping field.*/        
 SELECT name, continent, code, surface_area,
     -- 1. First case
@@ -141,7 +129,6 @@ FROM countries;
 
 /*Inner challenge
 The table you created with the added geosize_group field has been loaded for you here with the name countries_plus. Observe the use of (and the placement of) the INTO command to create this countries_plus table:
-
 SELECT name, continent, code, surface_area,
     CASE WHEN surface_area > 2000000
             THEN 'large'
@@ -152,5 +139,53 @@ SELECT name, continent, code, surface_area,
 INTO countries_plus
 FROM countries;
 You will now explore the relationship between the size of a country in terms of surface area and in terms of population using grouping fields created with CASE.
-
 By the end of this exercise, you'll be writing two queries back-to-back in a single script. You got this!*/
+SELECT country_code, size,
+    -- 1. First case
+    CASE WHEN size > 50000000 THEN 'large'
+        -- 2. Second case
+        WHEN size > 1000000 THEN 'medium'
+        -- 3. Else clause + end
+        ELSE 'small' END
+        -- 4. Alias name (popsize_group)
+        AS popsize_group
+-- 5. From table
+FROM populations
+-- 6. Focus on 2015
+WHERE year = 2015;
+
+
+SELECT country_code, size,
+    CASE WHEN size > 50000000 THEN 'large'
+        WHEN size > 1000000 THEN 'medium'
+        ELSE 'small' END
+        AS popsize_group
+-- 1. Into table
+INTO pop_plus
+FROM populations
+WHERE year = 2015;
+
+-- 2. Select all columns of pop_plus
+SELECT * FROM pop_plus;
+
+SELECT country_code, size,
+  CASE WHEN size > 50000000
+            THEN 'large'
+       WHEN size > 1000000
+            THEN 'medium'
+       ELSE 'small' END
+       AS popsize_group
+INTO pop_plus       
+FROM populations
+WHERE year = 2015;
+
+-- 5. Select fields
+SELECT name,continent, geosize_group,popsize_group
+-- 1. From countries_plus (alias as c)
+FROM countries_plus AS c
+  -- 2. Join to pop_plus (alias as p)
+INNER JOIN pop_plus AS p
+    -- 3. Match on country code
+ON c.code = p.country_code
+-- 4. Order the table    
+ORDER BY geosize_group;
