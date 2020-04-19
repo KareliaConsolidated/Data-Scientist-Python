@@ -143,3 +143,161 @@ print(holiday_dates['date'])
 # Count the proportion of stores of each store type.
 # Count the number of different department numbers, sorting the counts in descending order.
 # Count the proportion of different department numbers, sorting the proportions in descending order.
+# Count the number of stores of each type
+store_counts = stores['store_type'].value_counts()
+print(store_counts)
+
+# Get the proportion of stores of each type
+store_props = stores['store_type'].value_counts(normalize=True)
+print(store_props)
+
+# Count the number of each department number and sort
+dept_counts_sorted = departments['department_num'].value_counts(sort=True)
+print(dept_counts_sorted)
+
+# Get the proportion of departments of each number and sort
+dept_props_sorted = departments['department_num'].value_counts(normalize=True,sort=True)
+print(dept_props_sorted)
+
+# Exercise
+# What percent of sales occurred at each store type?
+# While .groupby() is useful, you can calculate grouped summary statistics without it.
+
+# Walmart distinguishes three types of stores: "supercenters", "discount stores", and "neighborhood markets", encoded in this dataset as type "A", "B", and "C". In this exercise, you'll calculate the total sales made at each store type, without using .groupby(). You can then use these numbers to see what proportion of Walmart's total sales were made at each.
+
+# sales is available and pandas is imported as pd.
+
+# Instructions
+# Calculate the total weekly sales over the whole dataset.
+# Subset for type "A" stores, and calculate their total weekly sales.
+# Do the same for type "B" and type "C" stores.
+# Combine the A/B/C results into a list, and divide by overall sales to get the proportion of sales by type.
+# Calc total weekly sales
+sales_all = sales["weekly_sales"].sum()
+
+# Subset for type A stores, calc total weekly sales
+sales_A = sales[sales["type"] == "A"]["weekly_sales"].sum()
+
+# Subset for type B stores, calc total weekly sales
+sales_B = sales[sales["type"] == "B"]["weekly_sales"].sum()
+
+# Subset for type C stores, calc total weekly sales
+sales_C = sales[sales["type"] == "C"]["weekly_sales"].sum()
+
+# Get proportion for each type
+sales_propn_by_type = [sales_A, sales_B, sales_C] / sales_all
+print(sales_propn_by_type)
+# Marvelous mathematics! About 91% of sales occured in stores of type A', 9% in stores of type B, and there are no sales records for stores of type C. Now see if you can do this calculation using .groupby().
+
+# Exercise
+# Calculations with .groupby()
+# The .groupby() method makes life much easier. In this exercise, you'll perform the same calculations as last time, except you'll use the .groupby() method. You'll also perform calculations on data grouped by two variables to see if sales differs by store type depending on if it's a holiday week or not.
+
+# sales is available and pandas is loaded as pd.
+
+# Instructions
+# Group sales by "type", take the sum of "weekly_sales", and store as sales_by_type.
+# Calculate the proportion of sales at each store type by dividing by the sum of sales_by_type. Assign to sales_propn_by_type.
+# Group by type; calc total weekly sales
+sales_by_type = sales.groupby("type")["weekly_sales"].sum()
+
+# Get proportion for each type
+sales_propn_by_type = sales_by_type / sales['weekly_sales'].sum()
+print(sales_propn_by_type)
+
+# Group sales by "type" and "is_holiday", take the sum of weekly_sales, and store as sales_by_holiday_type.
+
+# From previous step
+sales_by_type = sales.groupby("type")["weekly_sales"].sum()
+
+# Group by type and is_holiday; calc total weekly sales
+sales_by_type_is_holiday = sales.groupby(["type","is_holiday"])["weekly_sales"].sum()
+print(sales_by_type_is_holiday)
+
+# Exercise
+# Multiple grouped summaries
+# Earlier in this chapter you saw that the .agg() method is useful to compute multiple statistics on multiple variables. It also works with grouped data. NumPy, which is imported as np, has many different summary statistics functions, including:
+
+# np.min()
+# np.max()
+# np.mean()
+# np.median()
+# sales is available and pandas is imported as pd.
+
+# Instructions
+# Import NumPy with the alias np.
+# Get the min, max, mean, and median of weekly_sales for each store type using .groupby() and .agg(). Store this as sales_stats. Make sure to use numpy functions!
+# Get the min, max, mean, and median of unemployment and fuel_price_usd_per_l for each store type. Store this as unemp_fuel_stats.
+
+# Import NumPy with the alias np
+import numpy as np
+
+# For each store type, aggregate weekly_sales: get min, max, mean, and median
+sales_stats = sales.groupby("type")["weekly_sales"].agg([np.min, np.max, np.mean, np.median])
+
+# Print sales_stats
+print(sales_stats)
+
+# For each store type, aggregate unemployment and fuel_price_usd_per_l: get min, max, mean, and median
+unemp_fuel_stats = sales.groupby("type")[["unemployment","fuel_price_usd_per_l"]].agg([np.min, np.max, np.mean, np.median])
+
+# Print unemp_fuel_stats
+print(unemp_fuel_stats)
+
+# Awesome aggregating! Notice that the minimum weekly_sales is negative because some stores had more returns than sales.
+
+# Exercise
+# Pivoting on one variable
+# Pivot tables are the standard way of aggregating data in spreadsheets. In pandas, pivot tables are essentially just another way of performing grouped calculations. That is, the .pivot_table() method is just an alternative to .groupby().
+
+# In this exercise, you'll perform calculations using .pivot_table() to replicate the calculations you performed in the last lesson using .groupby().
+
+# sales is available and pandas is imported as pd.
+
+# Instructions
+# Get the mean weekly_sales by type using .pivot_table() and store as mean_sales_by_type.
+# Pivot for mean weekly_sales for each store type
+mean_sales_by_type = sales.pivot_table(values="weekly_sales",index="type")
+
+# Print mean_sales_by_type
+print(mean_sales_by_type)
+
+# Get the mean and median (using NumPy functions) of weekly_sales by type using .pivot_table() and store as mean_med_sales_by_type.
+# Import NumPy as np
+import numpy as np
+
+# Pivot for mean and median weekly_sales for each store type
+mean_med_sales_by_type = sales.pivot_table(values="weekly_sales",index="type", aggfunc=[np.mean,np.median])
+
+# Print mean_med_sales_by_type
+print(mean_med_sales_by_type)
+
+# Get the mean of weekly_sales by type and is_holiday using .pivot_table() and store as mean_sales_by_type_holiday.
+
+# Pivot for mean weekly_sales by store type and holiday 
+mean_sales_by_type_holiday = sales.pivot_table(values="weekly_sales", index="type", columns="is_holiday")
+
+# Print mean_sales_by_type_holiday
+print(mean_sales_by_type_holiday)
+
+# Exercise
+# Fill in missing values and sum values with pivot tables
+# The .pivot_table() method has several useful arguments, including fill_value and margins.
+
+# fill_value replaces missing values with a real value (known as imputation). What to replace missing values with is a topic big enough to have its own course (Dealing with Missing Data in Python), but the simplest thing to do is to substitute a dummy value.
+# margins is a shortcut for when you pivoted by two variables, but also wanted to pivot by each of those variables separately: it gives the row and column totals of the pivot table contents.
+# In this exercise, you'll practice using these arguments to up your pivot table skills, which will help you crunch numbers more efficiently!
+
+# sales is available and pandas is imported as pd.
+
+# Instructions
+
+# Print the mean weekly_sales by department and type, filling in any missing values with 0.
+# Print mean weekly_sales by department and type; fill missing values with 0
+print(sales.pivot_table(values="weekly_sales",index='type' ,columns="department", fill_value=0))
+
+# Print the mean weekly_sales by department and type, filling in any missing values with 0 and summing all rows and columns.
+# Print the mean weekly_sales by department and type; fill missing values with 0s; sum all rows and cols
+print(sales.pivot_table(values="weekly_sales", index="department", columns="type", fill_value=0, margins=True))
+
+# Magnificent margin making! You are now armed with pivot table skills that can help you compute summaries at multiple grouped levels in one line of code.
