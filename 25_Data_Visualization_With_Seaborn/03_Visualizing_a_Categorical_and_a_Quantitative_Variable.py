@@ -124,3 +124,128 @@ plt.show()
 # Use sns.catplot() to create a box plot with the student_data DataFrame, putting "internet" on the x-axis and "G3" on the y-axis.
 # Add subgroups so each box plot is colored based on "location".
 # Do not display the outliers.
+# Create a box plot with subgroups and omit the outliers
+sns.catplot(x='internet',y='G3',data=student_data,kind='box', hue='location', sym='')
+
+# Show plot
+plt.show()
+# The median grades are quite similar between each group, but the spread of the distribution looks larger among students who have internet access.
+
+############### Exercise ###############
+# Adjusting the whiskers
+# In the lesson we saw that there are multiple ways to define the whiskers in a box plot. In this set of exercises, we'll continue to use the student_data dataset to compare the distribution of final grades ("G3") between students who are in a romantic relationship and those that are not. We'll use the "romantic" variable, which is a yes/no indicator of whether the student is in a romantic relationship.
+
+# Let's create a box plot to look at this relationship and try different ways to define the whiskers.
+
+# We've already imported Seaborn as sns and matplotlib.pyplot as plt.
+
+############### Instructions ###############
+# Adjust the code to make the box plot whiskers to extend to 0.5 * IQR. Recall: the IQR is the interquartile range.
+# Set the whiskers to 0.5 * IQR
+sns.catplot(x="romantic", y="G3",
+            data=student_data,
+            kind="box", whis=0.5)
+
+# Show plot
+plt.show()
+
+############### Instructions ###############
+# Change the code to set the whiskers to extend to the 5th and 95th percentiles.
+# Extend the whiskers to the 5th and 95th percentile
+sns.catplot(x="romantic", y="G3",
+            data=student_data,
+            kind="box",
+            whis=[5,95])
+
+# Show plot
+plt.show()
+
+############### Instructions ###############
+# Change the code to set the whiskers to extend to the min and max values.
+# Set the whiskers at the min and max values
+sns.catplot(x="romantic", y="G3",
+            data=student_data,
+            kind="box",
+            whis=[0, 100])
+
+# Show plot
+plt.show()
+# The median grade is the same between these two groups, but the max grade is higher among students who are not in a romantic relationship.
+
+############### Exercise ###############
+# Customizing point plots
+# Let's continue to look at data from students in secondary school, this time using a point plot to answer the question: does the quality of the student's family relationship influence the number of absences the student has in school? Here, we'll use the "famrel" variable, which describes the quality of a student's family relationship from 1 (very bad) to 5 (very good).
+
+# As a reminder, to create a point plot, use the catplot() function and specify the name of the categorical variable to put on the x-axis (x=____), the name of the quantitative variable to summarize on the y-axis (y=____), the Pandas DataFrame to use (data=____), and the type of categorical plot (kind="point").
+
+# We've already imported Seaborn as sns and matplotlib.pyplot as plt.
+
+############### Instructions ###############
+# Use sns.catplot() and the student_data DataFrame to create a point plot with "famrel" on the x-axis and number of absences ("absences") on the y-axis.
+# Create a point plot of family relationship vs. absences
+sns.catplot(x='famrel', y='absences', data=student_data,kind='point')
+
+# Show plot
+plt.show()
+############### Instructions ###############
+# Add "caps" to the end of the confidence intervals with size 0.2.
+# Remove the lines joining the points
+sns.catplot(x="famrel", y="absences",
+			data=student_data,
+            kind="point",
+            capsize=0.2)
+            
+# Show plot
+plt.show()
+
+############### Instructions ###############
+# Remove the lines joining the points in each category.
+# Remove the lines joining the points
+sns.catplot(x="famrel", y="absences",
+			data=student_data,
+            kind="point",
+            capsize=0.2, join=False)
+            
+# Show plot
+plt.show()
+# While the average number of absences is slightly smaller among students with higher-quality family relationships, the large confidence intervals tell us that we can't be sure there is an actual association here.
+
+############### Exercise ###############
+# Point plots with subgroups
+# Let's continue exploring the dataset of students in secondary school. This time, we'll ask the question: is being in a romantic relationship associated with higher or lower school attendance? And does this association differ by which school the students attend? Let's find out using a point plot.
+
+# We've already imported Seaborn as sns and matplotlib.pyplot as plt.
+
+############### Instructions ###############
+# Use sns.catplot() and the student_data DataFrame to create a point plot with relationship status ("romantic") on the x-axis and number of absences ("absences") on the y-axis. Create subgroups based on the school that they attend ("school")
+# Create a point plot with subgroups
+sns.catplot(x="romantic", y="absences", data=student_data, kind="point", hue="school")
+
+# Show plot
+plt.show()
+
+############### Instructions ###############
+# Turn off the confidence intervals for the plot.
+# Turn off the confidence intervals for this plot
+sns.catplot(x="romantic", y="absences",
+			data=student_data,
+            kind="point",
+            hue="school",ci=None)
+
+# Show plot
+plt.show()
+############### Instructions ###############
+# Since there may be outliers of students with many absences, import the median function from numpy and display the median number of absences instead of the average.
+# Import median function from numpy
+from numpy import median
+
+# Plot the median number of absences instead of the mean
+sns.catplot(x="romantic", y="absences",
+			data=student_data,
+            kind="point",
+            hue="school",
+            ci=None, estimator=median)
+
+# Show plot
+plt.show()
+# It looks like students in romantic relationships have a higher average and median number of absences in the GP school, but this association does not hold for the MS school.
